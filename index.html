@@ -1,42 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://cdn.jsdelivr.net/npm/aframe@1.4.2/dist/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+<meta name="viewport"
+content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/aframe@1.4.2/dist/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+}
+</style>
 </head>
+
 <body>
 
-    <a-scene
-    mindar-image="imageTargetSrc: targets.mind;"
-    embedded
-    color-space="sRGB"
-    renderer="colorManagement: true;">
+<a-scene
+mindar-image="imageTargetSrc: targets.mind; autoStart: true;"
+embedded
+vr-mode-ui="enabled: false"
+device-orientation-permission-ui="enabled: false">
 
-    <a-assets>
-        <a-asset-item id="ball" src="model.glb"></a-asset-item>
-    </a-assets>
+<a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
-    <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
+<a-entity mindar-image-target="targetIndex: 0">
 
-    <a-entity id="anchor" mindar-image-target="targetIndex: 0">
+<!-- DEBUG cube -->
+<a-box color="red" depth="0.5"></a-box>
 
-    <a-entity id="ballModel" gltf-model="#ball" scale="0.5 0.5 0.5"></a-entity>
+</a-entity>
 
-    </a-entity>
+</a-scene>
 
-    </a-scene>
-
-    <div id="ui">
-        <button id="squish">Squish</button>
-        <button id="bounce">Bounce</button>
-        <button id="pulse">Pulse</button>
-        <button id="jiggle">Jiggle</button>
-    </div>
-
-    <script src="app.js"></script>
-    
 </body>
 </html>
