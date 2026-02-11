@@ -1,3 +1,10 @@
+let anim = null;
+let t = 0;
+
+window.startAnim = function(type) {
+  anim = type;
+  t = 0;
+};
 
 window.addEventListener("DOMContentLoaded", () => {
 
@@ -5,24 +12,20 @@ const anchor = document.querySelector("#anchor");
 const ui = document.querySelector("#ui");
 const ball = document.querySelector("#ball");
 
-let anim = null;
-let t = 0;
+// show buttons when tracking works
+anchor.addEventListener("targetFound", () => {
+  ui.style.display = "block";
+});
 
-// show buttons when target detected
-anchor.addEventListener("targetFound", () => ui.style.display = "block");
-anchor.addEventListener("targetLost", () => ui.style.display = "none");
+anchor.addEventListener("targetLost", () => {
+  ui.style.display = "none";
+});
 
-// animation trigger
-window.startAnim = (type) => {
-  anim = type;
-  t = 0;
-};
-
-// animation component
+// animation system
 AFRAME.registerComponent("ball-anim", {
   tick() {
 
-    if (!ball.object3D) return;
+    if (!ball || !ball.object3D) return;
 
     const o = ball.object3D;
     t += 0.08;
@@ -41,7 +44,7 @@ AFRAME.registerComponent("ball-anim", {
 
       case "pulse":
         const s = 1 + Math.sin(t)*0.1;
-        o.scale.set(s, s, s);
+        o.scale.set(s,s,s);
         break;
 
       case "jiggle":
@@ -52,7 +55,6 @@ AFRAME.registerComponent("ball-anim", {
   }
 });
 
-// resets
 function reset() {
   ball.object3D.scale.set(1,1,1);
   anim = null;
