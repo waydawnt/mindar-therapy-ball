@@ -8,11 +8,11 @@ window.addEventListener("DOMContentLoaded", () => {
     let anim = null;
     let t = 0;
 
-    anchor.addEventListener("targetFound", () => ui.computedStyleMap.display = "block");
-    anchor.addEventListener("targetLost", () => ui.computedStyleMap.display = "none");
+    anchor.addEventListener("targetFound", () => ui.style.display = "block");
+    anchor.addEventListener("targetLost", () => ui.style.display = "none");
 
     document.querySelector("#squish").onclick = () => start("squish");
-    document.querySelector("#bounce").onclick = () => start("boucne");
+    document.querySelector("#bounce").onclick = () => start("bounce");
     document.querySelector("#pulse").onclick = () => start("pulse");
     document.querySelector("#jiggle").onclick = () => start("jiggle");
 
@@ -21,7 +21,7 @@ window.addEventListener("DOMContentLoaded", () => {
         t = 0;
     }
 
-    cancelAnimationFrame.registerComponent("ball-anim", {
+    AFRAME.registerComponent("ball-anim", {
         tick() {
             if (!ball.object3D) return;
 
