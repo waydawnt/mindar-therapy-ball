@@ -19,12 +19,12 @@ device-orientation-permission-ui="enabled: false">
 
     <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
-    <a-entity mindar-image-target="targetIndex: 0">
+    <a-entity id="anchor" mindar-image-target="targetIndex: 0">
 
         <a-entity
-        gltf-model="model.glb"
-        mindar-smoothing="enabled: true"
-        scale="0.5 0.5 0.5">
+            id="ball"
+            gltf-model="model.glb"
+            scale="0.5 0.5 0.5">
         </a-entity>
 
     </a-entity>
@@ -38,5 +38,6 @@ device-orientation-permission-ui="enabled: false">
     <button onclick="startAnim('jiggle')">Jiggle</button>
 </div>
 
+<script src="app.js"></script>
 </body>
 </html>
