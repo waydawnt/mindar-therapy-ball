@@ -40,15 +40,46 @@ AFRAME.registerComponent("anim-controller", {
 
     switch(anim) {
 
-      case "squish":
-        o.scale.set(1.2, 1 - Math.sin(t)*0.35, 1.2);
-        if (t > Math.PI) reset();
-        break;
+      case "squish": {
+        // normalized animation time
+        const duration = 1.4;
+        const progress = Math.min(t / duration, 1);
 
-      case "bounce":
-        o.position.y = Math.abs(Math.sin(t))*0.4;
-        if (t > Math.PI*2) resetPos();
+        // spring easing (smooth compress + rebound)
+        const spring =
+          Math.exp(-6 * progress) *
+          Math.cos(14 * progress);
+
+        // squash amount
+        const squash = 1 - (1 - spring) * 0.45;
+
+        // volume preservation stretch
+        const stretch = 1 + (1 - squash) * 0.6;
+
+        o.scale.set(stretch, squash, stretch);
+
+        if (progress >= 1) {
+          o.scale.set(1,1,1);
+          anim = null;
+        }
         break;
+      }
+
+      case "bounce": {
+        const progress = Math.min(t / 1.6, 1);
+        const bounce =
+          Math.abs(Math.exp(-4 * progress) *
+          Math.cos(12 * progress));
+
+        o.position.y = bounce * 0.5;
+
+        if (progress >= 1) {
+          o.position.y = 0;
+          anim = null;
+        }
+
+        break;
+      }
 
       case "pulse":
         const s = 1 + Math.sin(t)*0.08;
