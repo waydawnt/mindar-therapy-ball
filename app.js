@@ -48,11 +48,13 @@ window.addEventListener("DOMContentLoaded", () => {
   // Gesture listeners
   // ---------------------------------
 
-  window.addEventListener("touchstart", () => pressing = true);
-  window.addEventListener("touchend", () => pressing = false);
+  const ball = document.querySelector("#ball");
 
-  window.addEventListener("mousedown", () => pressing = true);
-  window.addEventListener("mouseup", () => pressing = false);
+  ball.addEventListener("mousedown", () => pressing = true);
+  ball.addEventListener("mouseup", () => pressing = false);
+
+  ball.addEventListener("touchstart", () => pressing = true);
+  ball.addEventListener("touchend", () => pressing = false);
 
   // =====================================
   // ANIMATION CONTROLLER
