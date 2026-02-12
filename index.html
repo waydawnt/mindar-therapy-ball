@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport"
-content="width=device-width, initial-scale=1, viewport-fit=cover">
+      content="width=device-width, initial-scale=1, viewport-fit=cover">
 
 <script src="https://cdn.jsdelivr.net/npm/aframe@1.4.2/dist/aframe.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -13,39 +13,44 @@ content="width=device-width, initial-scale=1, viewport-fit=cover">
 <body>
 
 <a-scene
-mindar-image="
-  imageTargetSrc: targets.mind;
-  autoStart: true;
-  facingMode: environment;
-"
-vr-mode-ui="enabled: false"
-device-orientation-permission-ui="enabled: false">
+  mindar-image="
+    imageTargetSrc: targets.mind;
+    autoStart: true;
+    facingMode: environment;
+  "
+  vr-mode-ui="enabled: false"
+  device-orientation-permission-ui="enabled: false">
 
-  <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
+  <!-- Camera -->
+  <a-camera look-controls="enabled:false"></a-camera>
 
+  <!-- Anchor driven by MindAR -->
   <a-entity id="anchor" mindar-image-target="targetIndex: 0">
 
-  <!-- wrapper we animate -->
-  <a-entity id="animWrap">
+    <!-- animation wrapper: we animate this locally (scale/pos/rot) -->
+    <a-entity id="animWrap">
 
-    <a-entity
-      id="ball"
-      gltf-model="model.glb"
-      scale="0.5 0.5 0.5">
+      <!-- visible model -->
+      <a-entity
+        id="ball"
+        gltf-model="model.glb"
+        scale="0.5 0.5 0.5">
+      </a-entity>
+
     </a-entity>
 
   </a-entity>
 
-</a-entity>
-
 </a-scene>
 
-<!-- UI buttons (hidden initially via CSS) -->
-<div id="ui">
-  <button onclick="startAnim('squish')">Squish</button>
+<!-- UI buttons (hidden until target found) -->
+<div id="ui" style="display:none;">
   <button onclick="startAnim('bounce')">Bounce</button>
   <button onclick="startAnim('jiggle')">Jiggle</button>
 </div>
+
+<!-- Hint text -->
+<div id="hint" class="hint" style="opacity:0; pointer-events:none;">Tap anywhere to squeeze</div>
 
 <script src="app.js"></script>
 </body>
