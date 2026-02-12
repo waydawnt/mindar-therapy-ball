@@ -1,24 +1,14 @@
-// =====================================
-// GLOBAL ANIMATION STATE
-// =====================================
-
 let anim = null;
 let t = 0;
 
-// gesture squeeze state
 let pressing = false;
 let squeeze = 0;
 let velocity = 0;
 
-// button animation trigger
 window.startAnim = function(type) {
   anim = type;
   t = 0;
 };
-
-// =====================================
-// MAIN APP
-// =====================================
 
 window.addEventListener("DOMContentLoaded", () => {
 
@@ -31,48 +21,48 @@ window.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // ---------------------------------
-  // UI visibility on tracking
-  // ---------------------------------
-
+  // show/hide UI on target found/lost
   anchor.addEventListener("targetFound", () => {
     ui.style.display = "block";
   });
-
   anchor.addEventListener("targetLost", () => {
     ui.style.display = "none";
     anim = null;
   });
 
-  // ---------------------------------
-  // Gesture listeners
-  // ---------------------------------
+  // GLOBAL TOUCH / MOUSE: ignore touches that start inside the UI
+  window.addEventListener("touchstart", (e) => {
+    // if touch started inside #ui (button pressed) -> don't trigger squeeze
+    if (e.target && e.target.closest && e.target.closest("#ui")) return;
+    pressing = true;
+  }, { passive: true });
 
-  window.addEventListener("touchstart", () => pressing = true);
-  window.addEventListener("touchend", () => pressing = false);
+  window.addEventListener("touchend", (e) => {
+    // normal release (regardless of where)
+    pressing = false;
+  }, { passive: true });
 
-  window.addEventListener("mousedown", () => pressing = true);
-  window.addEventListener("mouseup", () => pressing = false);
+  window.addEventListener("mousedown", (e) => {
+    if (e.target && e.target.closest && e.target.closest("#ui")) return;
+    pressing = true;
+  });
 
-  // =====================================
-  // ANIMATION CONTROLLER
-  // =====================================
+  window.addEventListener("mouseup", () => {
+    pressing = false;
+  });
 
+  // Animation controller
   AFRAME.registerComponent("anim-controller", {
 
     tick() {
-
       if (!wrap.object3D) return;
-
       const o = wrap.object3D;
 
-      // ---------------------------------
-      // Gesture squeeze spring physics
-      // ---------------------------------
-
+      // ----------------------------
+      // Gesture squeeze spring
+      // ----------------------------
       const stiffness = 0.12;
       const damping = 0.85;
-
       const target = pressing ? 1 : 0;
 
       velocity += (target - squeeze) * stiffness;
@@ -82,74 +72,44 @@ window.addEventListener("DOMContentLoaded", () => {
       const squash = 1 - squeeze * 0.5;
       const stretch = 1 + squeeze * 0.6;
 
+      // apply local transform (wrapper)
       o.scale.set(stretch, squash, stretch);
 
-      // ---------------------------------
+      // ----------------------------
       // Button animations
-      // ---------------------------------
-
+      // ----------------------------
       t += 0.05;
 
-      switch(anim) {
+      switch (anim) {
 
-        // ---------- Bounce ----------
-
+        // Bounce
         case "bounce": {
-
           const progress = Math.min(t / 1.6, 1);
-
-          const bounce =
-            Math.abs(
-              Math.exp(-4 * progress) *
-              Math.cos(12 * progress)
-            );
-
+          const bounce = Math.abs(Math.exp(-4 * progress) * Math.cos(12 * progress));
           o.position.y = bounce * 0.4;
-
           if (progress >= 1) {
             o.position.y = 0;
             anim = null;
           }
-
           break;
         }
 
-        // ---------- Pulse ----------
-
-        case "pulse": {
-
-          const s = 1 + Math.sin(t) * 0.08;
-
-          o.scale.multiplyScalar(s);
-
-          if (t > Math.PI * 4) {
-            anim = null;
-          }
-
-          break;
-        }
-
-        // ---------- Jiggle ----------
-
+        // Jiggle
         case "jiggle": {
-
           o.rotation.z = Math.sin(t * 12) * 0.15;
-
           if (t > Math.PI) {
             o.rotation.z = 0;
             anim = null;
           }
-
           break;
         }
 
+        // default: nothing
       }
-
     }
 
   });
 
   // attach controller
   wrap.setAttribute("anim-controller", "");
-
 });
