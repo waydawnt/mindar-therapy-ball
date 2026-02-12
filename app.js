@@ -83,24 +83,32 @@ AFRAME.registerComponent("anim-controller", {
     switch(anim) {
 
       case "bounce": {
-        const duration = 1.4;
+
+        const duration = 1.2;
         const p = Math.min(t / duration, 1);
 
-        const height = Math.abs(Math.sin(p * Math.PI * 2.2)) * (1 - p);
+        // ease-in gravity fall + bounce
+        const bounceCurve =
+          Math.abs(Math.sin(p * Math.PI * 2)) *
+          (1 - p);
 
-        o.position.y = height * 0.6;
+        // vertical motion
+        o.position.y = bounceCurve * 0.6;
 
-        const impact = 1 - height;
+        // impact squash — only near ground
+        const impact = 1 - bounceCurve;
 
-        const squash = 1 - impact * 0.25;
-        const stretch = 1 + impact * 0.25;
+        const bounceStretch = 1 + impact * 0.25;
+        const bounceSquash  = 1 - impact * 0.25;
 
-        o.scale.x *= stretch;
-        o.scale.y *= squash;
-        o.scale.z *= stretch;
+        // combine squeeze + bounce scale
+        o.scale.set(
+          stretch * bounceStretch,
+          squash * bounceSquash,
+          stretch * bounceStretch
+        );
 
         if (p >= 1) {
-          o.position.y = 0;
           anim = null;
         }
 
