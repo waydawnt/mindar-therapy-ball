@@ -54,59 +54,70 @@ window.addEventListener("DOMContentLoaded", () => {
   // Animation controller
   AFRAME.registerComponent("anim-controller", {
 
-    tick() {
-      if (!wrap.object3D) return;
-      const o = wrap.object3D;
+  tick() {
 
-      // ----------------------------
-      // Gesture squeeze spring
-      // ----------------------------
-      const stiffness = 0.12;
-      const damping = 0.85;
-      const target = pressing ? 1 : 0;
+    if (!wrap.object3D) return;
 
-      velocity += (target - squeeze) * stiffness;
-      velocity *= damping;
-      squeeze += velocity;
+    const o = wrap.object3D;
 
-      const squash = 1 - squeeze * 0.5;
-      const stretch = 1 + squeeze * 0.6;
+    // ----------------------------
+    // SQUEEZE (scale only)
+    // ----------------------------
 
-      // apply local transform (wrapper)
-      o.scale.set(stretch, squash, stretch);
+    const stiffness = 0.12;
+    const damping = 0.85;
 
-      // ----------------------------
-      // Button animations
-      // ----------------------------
-      t += 0.05;
+    const target = pressing ? 1 : 0;
 
-      switch (anim) {
+    velocity += (target - squeeze) * stiffness;
+    velocity *= damping;
+    squeeze += velocity;
 
-        // Bounce
-        case "bounce": {
-          const progress = Math.min(t / 1.6, 1);
-          const bounce = Math.abs(Math.exp(-4 * progress) * Math.cos(12 * progress));
-          o.position.y = bounce * 0.4;
-          if (progress >= 1) {
-            o.position.y = 0;
-            anim = null;
-          }
-          break;
-        }
+    const squash = 1 - squeeze * 0.5;
+    const stretch = 1 + squeeze * 0.6;
 
-        // Jiggle
-        case "jiggle": {
-          o.rotation.z = Math.sin(t * 12) * 0.15;
-          if (t > Math.PI) {
-            o.rotation.z = 0;
-            anim = null;
-          }
-          break;
-        }
+    o.scale.set(stretch, squash, stretch);
 
-        // default: nothing
+    // reset motion layers each frame
+    o.position.y = 0;
+    o.rotation.z = 0;
+
+    // ----------------------------
+    // BUTTON ANIMATIONS
+    // ----------------------------
+
+    t += 0.05;
+
+    switch(anim) {
+
+      // Bounce → affects position only
+      case "bounce": {
+
+        const progress = Math.min(t / 1.6, 1);
+
+        const bounce =
+          Math.abs(Math.exp(-4 * progress) *
+          Math.cos(12 * progress));
+
+        o.position.y = bounce * 0.4;
+
+        if (progress >= 1) anim = null;
+
+        break;
       }
+
+      // Jiggle → affects rotation only
+      case "jiggle": {
+
+        o.rotation.z = Math.sin(t * 12) * 0.15;
+
+        if (t > Math.PI) anim = null;
+
+        break;
+      }
+
     }
+  }
 
   });
 
