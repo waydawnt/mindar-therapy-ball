@@ -19,13 +19,20 @@ const hint = document.querySelector("#hint");
 
 anchor.addEventListener("targetFound", () => {
   ui.style.display = "flex";
-  hint.style.opacity = 1;
+  
+  requestAnimationFrame(() => {
+    ui.classList.add("show");
+    hint.classList.add("show");
+  });
 });
 
 anchor.addEventListener("targetLost", () => {
-  ui.style.display = "none";
-  hint.style.opacity = 0;
-  anim = null;
+  ui.classList.remove("show");
+  hint.classList.remove("show");
+
+  setTimeout(() => {
+    ui.style.display = "none";
+  }, 300);
 });
 
 // ignore UI taps for squeeze

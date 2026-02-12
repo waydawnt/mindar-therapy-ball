@@ -1,7 +1,10 @@
 body {
   margin: 0;
   overflow: hidden;
+  font-family: system-ui, sans-serif;
 }
+
+/* ---------- UI container ---------- */
 
 #ui {
   position: fixed;
@@ -9,20 +12,78 @@ body {
   left: 50%;
   transform: translateX(-50%);
   display: none;
-  gap: 10px;
+  gap: 12px;
+  z-index: 999;
+
+  opacity: 0;
+  transition: opacity 0.35s ease;
 }
 
-button {
-  padding: 10px;
-  font-size: 14px;
+#ui.show {
+  opacity: 1;
 }
+
+/* ---------- Buttons ---------- */
+
+#ui button {
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+
+  color: white;
+  background: rgba(255,255,255,0.15);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 4px 10px rgba(0,0,0,0.25);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.1s ease,
+    background 0.2s ease;
+}
+
+/* button press animation */
+
+#ui button:active {
+  transform: scale(0.9);
+  background: rgba(255,255,255,0.35);
+}
+
+/* ---------- Hint text ---------- */
 
 #hint {
   position: fixed;
   top: 20px;
   width: 100%;
   text-align: center;
+
   color: white;
+  font-size: 16px;
+  font-weight: 500;
+
   opacity: 0;
-  transition: opacity 0.3s;
+  pointer-events: none;
+
+  text-shadow: 0 0 8px black;
+
+  transition: opacity 0.4s ease;
+}
+
+/* floating hint animation */
+
+@keyframes floatHint {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
+
+#hint.show {
+  opacity: 1;
+  animation: floatHint 1.6s infinite ease-in-out;
 }
