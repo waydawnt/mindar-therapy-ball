@@ -1,114 +1,155 @@
+// =====================================
+// GLOBAL ANIMATION STATE
+// =====================================
+
 let anim = null;
 let t = 0;
 
-window.startAnim = type => {
+// gesture squeeze state
+let pressing = false;
+let squeeze = 0;
+let velocity = 0;
+
+// button animation trigger
+window.startAnim = function(type) {
   anim = type;
   t = 0;
 };
 
+// =====================================
+// MAIN APP
+// =====================================
+
 window.addEventListener("DOMContentLoaded", () => {
 
-const anchor = document.querySelector("#anchor");
-const ui = document.querySelector("#ui");
-const wrap = document.querySelector("#animWrap");
+  const anchor = document.querySelector("#anchor");
+  const wrap = document.querySelector("#animWrap");
+  const ui = document.querySelector("#ui");
 
-anchor.addEventListener("targetFound", () => {
-  ui.style.display = "block";
-});
-
-anchor.addEventListener("targetLost", () => {
-  ui.style.display = "none";
-  anim = null;
-});
-
-AFRAME.registerComponent("anim-controller", {
-  tick() {
-
-    if (!wrap.object3D) return;
-
-    const o = wrap.object3D;
-
-    if (!wrap._smoothPos) {
-      wrap._smoothPos = o.position.clone();
-    }
-
-    const alpha = 0.15;
-    wrap._smoothPos.lerp(o.position, alpha);
-    o.position.copy(wrap._smoothPos);
-
-    t += 0.05;
-
-    switch(anim) {
-
-      case "squish": {
-        // normalized animation time
-        const duration = 1.4;
-        const progress = Math.min(t / duration, 1);
-
-        // spring easing (smooth compress + rebound)
-        const spring =
-          Math.exp(-6 * progress) *
-          Math.cos(14 * progress);
-
-        // squash amount
-        const squash = 1 - (1 - spring) * 0.45;
-
-        // volume preservation stretch
-        const stretch = 1 + (1 - squash) * 0.6;
-
-        o.scale.set(stretch, squash, stretch);
-
-        if (progress >= 1) {
-          o.scale.set(1,1,1);
-          anim = null;
-        }
-        break;
-      }
-
-      case "bounce": {
-        const progress = Math.min(t / 1.6, 1);
-        const bounce =
-          Math.abs(Math.exp(-4 * progress) *
-          Math.cos(12 * progress));
-
-        o.position.y = bounce * 0.5;
-
-        if (progress >= 1) {
-          o.position.y = 0;
-          anim = null;
-        }
-
-        break;
-      }
-
-      case "pulse":
-        const s = 1 + Math.sin(t)*0.08;
-        o.scale.set(s,s,s);
-        break;
-
-      case "jiggle":
-        o.rotation.z = Math.sin(t*12)*0.15;
-        if (t > Math.PI) resetRot();
-        break;
-    }
+  if (!anchor || !wrap) {
+    console.error("Missing anchor or animWrap!");
+    return;
   }
-});
 
-wrap.setAttribute("anim-controller", "");
+  // ---------------------------------
+  // UI visibility on tracking
+  // ---------------------------------
 
-function reset() {
-  wrap.object3D.scale.set(1,1,1);
-  anim = null;
-}
+  anchor.addEventListener("targetFound", () => {
+    ui.style.display = "block";
+  });
 
-function resetPos() {
-  wrap.object3D.position.y = 0;
-  anim = null;
-}
+  anchor.addEventListener("targetLost", () => {
+    ui.style.display = "none";
+    anim = null;
+  });
 
-function resetRot() {
-  wrap.object3D.rotation.z = 0;
-  anim = null;
-}
+  // ---------------------------------
+  // Gesture listeners
+  // ---------------------------------
+
+  window.addEventListener("touchstart", () => pressing = true);
+  window.addEventListener("touchend", () => pressing = false);
+
+  window.addEventListener("mousedown", () => pressing = true);
+  window.addEventListener("mouseup", () => pressing = false);
+
+  // =====================================
+  // ANIMATION CONTROLLER
+  // =====================================
+
+  AFRAME.registerComponent("anim-controller", {
+
+    tick() {
+
+      if (!wrap.object3D) return;
+
+      const o = wrap.object3D;
+
+      // ---------------------------------
+      // Gesture squeeze spring physics
+      // ---------------------------------
+
+      const stiffness = 0.12;
+      const damping = 0.85;
+
+      const target = pressing ? 1 : 0;
+
+      velocity += (target - squeeze) * stiffness;
+      velocity *= damping;
+      squeeze += velocity;
+
+      const squash = 1 - squeeze * 0.5;
+      const stretch = 1 + squeeze * 0.6;
+
+      o.scale.set(stretch, squash, stretch);
+
+      // ---------------------------------
+      // Button animations
+      // ---------------------------------
+
+      t += 0.05;
+
+      switch(anim) {
+
+        // ---------- Bounce ----------
+
+        case "bounce": {
+
+          const progress = Math.min(t / 1.6, 1);
+
+          const bounce =
+            Math.abs(
+              Math.exp(-4 * progress) *
+              Math.cos(12 * progress)
+            );
+
+          o.position.y = bounce * 0.4;
+
+          if (progress >= 1) {
+            o.position.y = 0;
+            anim = null;
+          }
+
+          break;
+        }
+
+        // ---------- Pulse ----------
+
+        case "pulse": {
+
+          const s = 1 + Math.sin(t) * 0.08;
+
+          o.scale.multiplyScalar(s);
+
+          if (t > Math.PI * 4) {
+            anim = null;
+          }
+
+          break;
+        }
+
+        // ---------- Jiggle ----------
+
+        case "jiggle": {
+
+          o.rotation.z = Math.sin(t * 12) * 0.15;
+
+          if (t > Math.PI) {
+            o.rotation.z = 0;
+            anim = null;
+          }
+
+          break;
+        }
+
+      }
+
+    }
+
+  });
+
+  // attach controller
+  wrap.setAttribute("anim-controller", "");
 
 });
