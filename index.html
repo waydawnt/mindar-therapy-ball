@@ -13,45 +13,39 @@
 <body>
 
 <a-scene
-  mindar-image="
-    imageTargetSrc: targets.mind;
-    autoStart: true;
-    facingMode: environment;
-  "
-  vr-mode-ui="enabled: false"
-  device-orientation-permission-ui="enabled: false">
+mindar-image="
+  imageTargetSrc: targets.mind;
+  autoStart: true;
+"
+vr-mode-ui="enabled:false"
+device-orientation-permission-ui="enabled:false">
 
-  <!-- Camera -->
-  <a-camera look-controls="enabled:false"></a-camera>
+<a-camera look-controls="enabled:false"></a-camera>
 
-  <!-- Anchor driven by MindAR -->
-  <a-entity id="anchor" mindar-image-target="targetIndex: 0">
+<a-entity id="anchor" mindar-image-target="targetIndex: 0">
 
-    <!-- animation wrapper: we animate this locally (scale/pos/rot) -->
-    <a-entity id="animWrap">
+  <a-entity id="animWrap">
 
-      <!-- visible model -->
-      <a-entity
-        id="ball"
-        gltf-model="model.glb"
-        scale="0.5 0.5 0.5">
-      </a-entity>
-
+    <a-entity
+      id="ball"
+      gltf-model="model.glb"
+      scale="0.5 0.5 0.5">
     </a-entity>
 
   </a-entity>
 
+</a-entity>
+
 </a-scene>
 
-<!-- UI buttons (hidden until target found) -->
-<div id="ui" style="display:none;">
+<div id="ui">
   <button onclick="startAnim('bounce')">Bounce</button>
   <button onclick="startAnim('jiggle')">Jiggle</button>
 </div>
 
-<!-- Hint text -->
-<div id="hint" class="hint" style="opacity:0; pointer-events:none;">Tap anywhere to squeeze</div>
+<div id="hint">Tap anywhere to squeeze</div>
 
 <script src="app.js"></script>
+
 </body>
 </html>

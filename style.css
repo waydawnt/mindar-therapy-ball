@@ -1,10 +1,8 @@
 body {
   margin: 0;
   overflow: hidden;
-  font-family: sans-serif;
 }
 
-/* UI buttons */
 #ui {
   position: fixed;
   bottom: 20px;
@@ -12,28 +10,19 @@ body {
   transform: translateX(-50%);
   display: none;
   gap: 10px;
-  z-index: 999;
 }
 
-#ui button {
-  padding: 10px 16px;
+button {
+  padding: 10px;
   font-size: 14px;
-  border-radius: 8px;
-  border: none;
-  background: #ffffffcc;
-  cursor: pointer;
 }
 
-/* hint text */
 #hint {
   position: fixed;
   top: 20px;
   width: 100%;
   text-align: center;
   color: white;
-  font-size: 16px;
-  text-shadow: 0 0 6px black;
-  transition: opacity 0.35s ease;
-  z-index: 999;
-  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
