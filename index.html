@@ -13,29 +13,33 @@ content="width=device-width, initial-scale=1, viewport-fit=cover">
 <body>
 
 <a-scene
-mindar-image="imageTargetSrc: targets.mind; autoStart: true;"
-vr-mode-ui="enabled: false"
-device-orientation-permission-ui="enabled: false">
+  mindar-image="imageTargetSrc: targets.mind; autoStart: true;"
+  vr-mode-ui="enabled: false"
+  device-orientation-permission-ui="enabled: false">
 
-    <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
+  <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
-    <a-entity id="anchor" mindar-image-target="targetIndex: 0">
+  <!-- MindAR anchor (this is driven by MindAR tracking) -->
+  <a-entity id="anchor" mindar-image-target="targetIndex: 0"></a-entity>
 
-        <a-entity
-            id="ball"
-            gltf-model="model.glb"
-            scale="0.5 0.5 0.5">
-        </a-entity>
-
+  <!-- Stabilizer: we update this by copying the anchor world transform smoothly -->
+  <a-entity id="stabilizer" visible="false">
+    <!-- model is child of stabilizer, so local animations won't fight tracking -->
+    <a-entity
+      id="ball"
+      gltf-model="model.glb"
+      scale="0.5 0.5 0.5">
     </a-entity>
+  </a-entity>
 
 </a-scene>
 
+<!-- UI buttons (hidden initially via CSS) -->
 <div id="ui">
-    <button onclick="startAnim('squish')">Squish</button>
-    <button onclick="startAnim('bounce')">Bounce</button>
-    <button onclick="startAnim('pulse')">Pulse</button>
-    <button onclick="startAnim('jiggle')">Jiggle</button>
+  <button onclick="startAnim('squish')">Squish</button>
+  <button onclick="startAnim('bounce')">Bounce</button>
+  <button onclick="startAnim('pulse')">Pulse</button>
+  <button onclick="startAnim('jiggle')">Jiggle</button>
 </div>
 
 <script src="app.js"></script>
