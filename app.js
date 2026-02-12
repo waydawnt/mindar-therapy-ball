@@ -27,6 +27,15 @@ AFRAME.registerComponent("anim-controller", {
     if (!wrap.object3D) return;
 
     const o = wrap.object3D;
+
+    if (!wrap._smoothPos) {
+      wrap._smoothPos = o.position.clone();
+    }
+
+    const alpha = 0.15;
+    wrap._smoothPos.lerp(o.position, alpha);
+    o.position.copy(wrap._smoothPos);
+
     t += 0.05;
 
     switch(anim) {
