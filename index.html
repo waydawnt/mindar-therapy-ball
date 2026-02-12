@@ -13,24 +13,30 @@ content="width=device-width, initial-scale=1, viewport-fit=cover">
 <body>
 
 <a-scene
-  mindar-image="imageTargetSrc: targets.mind; autoStart: true;"
-  vr-mode-ui="enabled: false"
-  device-orientation-permission-ui="enabled: false">
+mindar-image="
+  imageTargetSrc: targets.mind;
+  autoStart: true;
+  facingMode: environment;
+"
+vr-mode-ui="enabled: false"
+device-orientation-permission-ui="enabled: false">
 
   <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
-  <!-- MindAR anchor (this is driven by MindAR tracking) -->
-  <a-entity id="anchor" mindar-image-target="targetIndex: 0"></a-entity>
+  <a-entity id="anchor" mindar-image-target="targetIndex: 0">
 
-  <!-- Stabilizer: we update this by copying the anchor world transform smoothly -->
-  <a-entity id="stabilizer" visible="false">
-    <!-- model is child of stabilizer, so local animations won't fight tracking -->
+  <!-- wrapper we animate -->
+  <a-entity id="animWrap">
+
     <a-entity
       id="ball"
       gltf-model="model.glb"
       scale="0.5 0.5 0.5">
     </a-entity>
+
   </a-entity>
+
+</a-entity>
 
 </a-scene>
 
