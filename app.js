@@ -83,14 +83,27 @@ AFRAME.registerComponent("anim-controller", {
     switch(anim) {
 
       case "bounce": {
-        const progress = Math.min(t / 1.6, 1);
-        const bounce =
-          Math.abs(Math.exp(-4 * progress) *
-          Math.cos(12 * progress));
+        const duration = 1.4;
+        const p = Math.min(t / duration, 1);
 
-        o.position.y = bounce * 0.4;
+        const height = Math.abs(Math.sin(p * Math.PI * 2.2)) * (1 - p);
 
-        if (progress >= 1) anim = null;
+        o.position.y = height * 0.6;
+
+        const impact = 1 - height;
+
+        const squash = 1 - impact * 0.25;
+        const stretch = 1 + impact * 0.25;
+
+        o.scale.x *= stretch;
+        o.scale.y *= squash;
+        o.scale.z *= stretch;
+
+        if (p >= 1) {
+          o.position.y = 0;
+          anim = null;
+        }
+
         break;
       }
 
